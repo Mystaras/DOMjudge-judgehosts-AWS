@@ -45,12 +45,12 @@ If you wish to understand what the script is doing or wish to debug read [README
 When the script has ended you have successfully cerated all resources with 0 judgehosts. **Update the judgehost user password on your domserver or update the secret itself to the secret in the `AWS::SecretsManager`** 
 
 Once the judgehost secret has been set on your domserver you can modify (TotalCapacity, OnDemandCapacity) and run the bellow command to increase the number of judgehost to N `On Demand` VMs. **It is advised not to use `Spot` instances. As if they get claimed while a judge is running a task, DOMjudge will have a hard time recovering**
-```console
+```bash
 $ aws cloudformation update-stack --stack-name JudgeHosts \
                             --use-previous-template \
                             --parameters ParameterKey=CapacityType,ParameterValue=on-demand \
-                                            ParameterKey=TotalCapacity,ParameterValue=N \
-                                            ParameterKey=OnDemandCapacity,ParameterValue=N \
+                                            ParameterKey=TotalCapacity,ParameterValue={N} \
+                                            ParameterKey=OnDemandCapacity,ParameterValue={N} \
                                             ParameterKey=SpotCapacity,ParameterValue=0 \
                             --capabilities CAPABILITY_NAMED_IAM 
 ```
@@ -91,7 +91,7 @@ If you wish to cleanup due to a crash or once you are done. The following comman
 - Delete the cloud formation stack and all resources will be freed. The stack name is the variable in the [deploy_judgehosts.sh](./cloudFormation/deploy_judgehosts.sh) script.
 - Delete the previously created bucket. The s3_bucket is the variable in the [deploy_judgehosts.sh](./cloudFormation/deploy_judgehosts.sh) script. 
 
-```console
+```bash
 $ aws cloudformation delete-stack --stack-name $stack_name
 $ aws s3 rb s3://$s3_bucket/ --region $region --force
 ```
