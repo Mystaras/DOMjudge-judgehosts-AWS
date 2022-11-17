@@ -16,8 +16,8 @@ s3_bucket_policy_name=judgehostSrcRead # S3 bucket access policy
 secret_policy_name=judgehostGetSecret  # Secret access policy name
 ## EC2
 key_pair_name=judgehost-key    # Key pair name (ssh key)
-launch_template_name=judgehostEC2Template # Ec2 judgehost fleat template name
-security_group_name=judgehostSecurityGroup  # Judgehosts security group name
+launch_template_name=judgehostEC2Template  # Ec2 judgehost fleat template name
+security_group_name=judgehostSecurityGroup # Judgehosts security group name
 vm_image=ami-0a5b5c0ea66ec560d # Machine os (modify to the latest debian)
 vm_type=t3.micro               # Machine category/type
 
@@ -76,21 +76,21 @@ printf "Validating stack:\n$execute_change"
 eval $execute_change
 
 # Wit for stack deployment
-printf "Waiting on stack to be up...\n"
+printf "\nWaiting on stack $stack_name to be up...\n"
 stack_status=$(aws cloudformation describe-stacks \
                     --stack-name $stack_name \
                     --query "Stacks[0].StackStatus")
                     
-while [ $stack_status != \"UPDATE_COMPLETE\" ]
+while [ $stack_status != \"CREATE_COMPLETE\" ]
 do
-    printf "Stack status is $stack_status waiting for 30s\n"
+    printf "\tStack $stack_name state is $stack_status, checking again in 30 seconds\n"
     sleep 30
     stack_status=$(aws cloudformation describe-stacks \
                     --stack-name $stack_name \
                     --query "Stacks[0].StackStatus")
 done
 
-printf "The resources for the judgehosts are ready. By defauilt no judges are up as the password needs to be updated.\n\n"
+printf "\nThe resources for the judgehosts are ready. By defauilt no judges are up as the password needs to be updated.\n\n"
 
 judge_pw=$(aws secretsmanager get-secret-value \
                     --secret-id $secret_name \

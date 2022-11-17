@@ -1,7 +1,7 @@
 #!/bin/bash -eu
 
-# Initialization scrpt, will be run only once on VM creation
-# USER=admin
+# Initialization script, will be run only once on VM creation
+# echo $USER
 
 sudo apt-get update
 sudo apt-get install ca-certificates curl gnupg lsb-release git jq -y
@@ -36,7 +36,7 @@ chmod +x $judge_dir/scripts/docker_start.sh
 
 # Add reboot task
 # Run Startup script
-echo "@reboot $judge_dir/scripts/docker_start.sh" >> cron_tmp
-sudo -u $USER crontab cron_tmp
-rm cron_tmp
+echo "@reboot $judge_dir/scripts/docker_start.sh" >> /home/$USER/cron_tmp
+sudo -u $USER crontab /home/$USER/cron_tmp
+rm /home/$USER/cron_tmp
 sudo reboot

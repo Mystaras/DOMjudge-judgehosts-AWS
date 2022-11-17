@@ -151,7 +151,7 @@ Resources:
   JudgeHostLaunchTemplate:
     Type: AWS::EC2::LaunchTemplate
     Properties:
-      LaunchTemplateName: !Ref TemplateName
+      LaunchTemplateName: !Ref LaunchTemplateName
       LaunchTemplateData:
         ImageId: !Ref MachineImage
         InstanceType: !Ref MachineType
@@ -176,7 +176,7 @@ Resources:
 
               # Run init script
               judge_dir=/home/$user/judgehost
-              chmod +x $judge_dir/scripts/init.sh
+              chmod +x $judge_dir/scripts/docker_init.sh
               sudo -u $user $judge_dir/scripts/docker_init.sh 
 
         
