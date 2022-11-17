@@ -65,10 +65,10 @@ You can play with the template parameters to change the number of instances. **Y
 ## Starting/Stopping or Scaling-Down judgehost VMs
 Upon creation of the judgehost VM, the [docker_init.sh](./judgehost/scripts/docker_init.sh) script is executed on the VM. It installs all required resources and adds the [docker_start.sh](./judgehost/scripts/docker_start.sh) script to the startup of the VM using `crontab`. If you restart or power-on a stopped judgehost VM, it will automatically re-connect to the defined server without requiring any action. 
 
-If you terminate a judgehost VM, a new VM will be automatically supplied by the CloudFormation stack. If you wish to scale down the number of judgehosts. Either *safely* stop the specific VM if you plan on using it again and don't mind the cost of a stopped instance. Or, decrease the number of judges on the CloudFormation template. 
+If you terminate manually a specific judgehost VM, a new VM will be automatically provisioned by the CloudFormation stack. If you wish to scale down the number of judgehosts. Either *safely* stop the specific VM if you plan on using it again and don't mind the cost of a stopped instance. Or, decrease the number of judges on the CloudFormation template. 
 
 Keep in mind that:
-- If you power-off a judgehost VM, the data of the judge will be lost (see [docker_start.sh](./judgehost/scripts/docker_start.sh) comments)
+- If you power-off a judgehost VM, the data of the judge will be lost (see comments of [docker_start.sh](./judgehost/scripts/docker_start.sh))
 - When downsizing, there is no rule as to which VM will be claimed. Therefore, a working judgehost could be claimed. AWS seems to prioritize termination of powered-off instances when downsizing, but this is not formally stated.
 
 ##  Setting up ssh
