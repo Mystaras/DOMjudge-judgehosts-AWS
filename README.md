@@ -97,6 +97,6 @@ If you wish to cleanup after a crash or terminate the judges. The following comm
 - Delete the previously created bucket. The `s3_bucket_name` and `region` are the variables in the [deploy_judgehosts.sh](./cloud-formation/deploy_judgehosts.sh) script. 
 
 ```bash
-aws cloudformation delete-stack --stack-name {stack_name|
+aws cloudformation delete-stack --stack-name {stack_name}
 aws s3 rb s3://{s3_bucket_name}/ --region {region} --force
 ```
