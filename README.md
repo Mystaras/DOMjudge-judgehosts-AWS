@@ -11,7 +11,7 @@ This repository offers an easy way to deploy DOMjudge judgehosts using CloudForm
 
 
 ## Template
-The [judge-host.yaml](cloud-formation/judge-hosts.yaml) template will create all the necessary resources for the judge-hosts and deploy and EC2Fleet of the specified number of judgehosts.
+The [judge-host.yaml](cloud-formation/judge-hosts.yaml) template will create all the necessary resources for the judgehosts and deploy an EC2Fleet of judgehosts.
 
 <img src="./readme-img/judgehost-designer.png" width="350">
 
