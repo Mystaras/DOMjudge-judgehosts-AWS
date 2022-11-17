@@ -84,7 +84,7 @@ And connect using the target instance's `public IPv4 DNS`:
 $ ssh ec2-X-X-X-X
 ```
 
-## Something when wrong
+## Something went wrong
 - If the deployment crashes investigate what went wrong in the CloudFormation logs. 
 - If the CloudFormation stack get deployed but the judges never connect to the domserver. Something went wrong in the initialization scripts. Connect to the judgehost VM and check the user data log files:
     - `/var/log/cloud-init.log` 
