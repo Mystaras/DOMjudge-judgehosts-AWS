@@ -5,7 +5,7 @@ In this README you will find instructions on how to deploy judgehosts for DOMjud
 ## Requirements
 - aws-cli/1.25.60 Python/3.8.10 botocore/1.27.59
     - [Login](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html) to able to use the CLI. 
-    - The default `eu-central-1`, see [Configure Deployment](README#configure-deployment) if you wish to modify.
+    - The default `eu-central-1`, see [Configure Deployment](#configure-deployment) if you wish to modify.
     - The reason we use aws-cli v1 is to be able to use a virtual-env but v2 should work as well.
 - [jq](https://manpages.ubuntu.com/manpages/xenial/man1/jq.1.html)
 
@@ -19,8 +19,8 @@ What is created?
 - `SecretsManager::Secret`: secret for the judgehost password
 - `S3 bucket`: contents of [./judgehosts](./judgehost/) which contains all the required code to setup and deploy the judgehosts
 - `IAM::InstanceProfile`: profile to attach the role the judgehost VMs
-    - `AWS::IAM::Role`: role for the judgehosts in order to access the `secret` and `S3 bucket`.
-        - `IAM::Policy`: policies to access the secret and S3 bucket
+    - `AWS::IAM::Role`: role for the judgehosts in order to access the `secret` and `S3 bucket`
+        - `IAM::Policy`: policies to access the `secret` and the `S3 bucket`
 - Resources to ssh to the judgehost VMs
     - `EC2::SecurityGroup`: Ingress port 22 (ssh)
     - `EC2::KeyPair`: ssh private key, can be found in `Parameter Store`
