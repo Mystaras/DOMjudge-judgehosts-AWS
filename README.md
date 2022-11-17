@@ -48,7 +48,7 @@ If you wish to understand what the script is doing or wish to debug, read [READM
 
 When the script has ended, you have successfully created all resources with 0 judgehosts. **Update the judgehost user password on your domserver or update the secret itself in the `AWS::SecretsManager`** 
 
-Once the judgehost secret has been set on your domserver, you can modify (TotalCapacity, OnDemandCapacity) and run the bellow command to increase the number of judgehost to N `On Demand` VMs. **It is advised not to use `Spot` instances. As if they get claimed while a judgehost is running a task, DOMjudge will have a hard time recovering**.
+Once the judgehost secret has been set on your domserver, you can modify (TotalCapacity, OnDemandCapacity) and run the bellow command to increase the number of judgehosts to N `On Demand` VMs. **It is advised not to use `Spot` instances. As if they get claimed while a judgehost is running a task, DOMjudge will have a hard time recovering**.
 ```bash
 aws cloudformation update-stack --stack-name JudgeHosts \
                             --use-previous-template \
