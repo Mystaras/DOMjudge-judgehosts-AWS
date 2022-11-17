@@ -7,9 +7,6 @@ Parameters:
     Type: String
     Default: judgehost-src
   ## Secret Manager
-  SecretDescription:
-    Type: String
-    Default: Login for judgehosts.
   SecretName:
     Type: String
     Default: prod/judgehost/pw
@@ -70,7 +67,7 @@ Resources:
   JudgeHostSecret:
     Type: AWS::SecretsManager::Secret
     Properties:
-      Description: !Ref SecretDescription
+      Description: "Login password for the judgehost user"
       Name: !Ref SecretName
       GenerateSecretString:
         SecretStringTemplate: '{"username": "judgehost"}'

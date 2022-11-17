@@ -16,7 +16,7 @@ s3_bucket_policy_name=judgehostSrcRead # S3 bucket access policy
 secret_policy_name=judgehostGetSecret  # Secret access policy name
 ## EC2
 key_pair_name=judgehost-key    # Key pair name (ssh key)
-launch_template_name=judgehostFleetTemplate # Ec2 judgehost fleat template name
+launch_template_name=judgehostEC2Template # Ec2 judgehost fleat template name
 security_group_name=judgehostSecurityGroup  # Judgehosts security group name
 vm_image=ami-0a5b5c0ea66ec560d # Machine os (modify to the latest debian)
 vm_type=t3.micro               # Machine category/type

@@ -13,6 +13,8 @@ In this README you will find instructions on how to deploy judgehosts for DOMjud
 ## Template
 The [judge-host.yaml](cloud-formation/judge-hosts.yaml) template will create all the necessary resources for the judge-hosts and deploy and EC2Fleet of the specified number of judgehosts.
 
+![Graph](./readme-img/judgehost-designer.png)
+
 What is created?
 - `SecretsManager::Secret`: secret for the judgehost password
 - `S3 bucket`: contents of [./judgehosts](./judgehost/) which contains all the required code to setup and deploy the judgehosts
@@ -64,7 +66,7 @@ If you terminate a judgehost VM, a new VM will be automatically supplied by the 
 
 Keep in mind that:
 - If you power-off a judgehost VM the data of judge will be lost (see [docker_start.sh](./judgehost/scripts/docker_start.sh) comments)
-- When downsizing there is no rule as to which VM will be claimed. Therefore, a working judgehost could be claimed. TODO: Research if perhaps powered-off instances are prioritized. 
+- When downsizing there is no rule as to which VM will be claimed. Therefore, a working judgehost could be claimed. AWS seems to prioritize termination of powered-off instances when downsizing, but this is not formally stated.
 
 ##  Setting up ssh
 Once you have deployed your judgehosts, you can fetch your ssh key using the AWS console in the `AWS Systems Manager/Parameter Store` (Change the permission of the key, `600` or `400`). A wildcard ssh `.config` you can use to connect to your judgehosts is:
