@@ -1,6 +1,6 @@
 #!/bin/bash -eu
 
-echo $USER
+# Initialization scrpt, will be run only once on VM creation
 # USER=admin
 
 sudo apt-get update
@@ -27,16 +27,16 @@ sudo sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT=""/GRUB_CMDLINE_LINUX_DEFAULT="cgroup_
 sudo update-grub
 
 # Find the judge directory
-JUDGE_DIR=/home/$USER/judgehost
-echo "judgehost dir found at: $JUDGE_DIR"
+judge_dir=/home/$USER/judgehost
+echo "judgehost dir found at: $judge_dir"
 
 # Make the scripts executable
-chmod +x $JUDGE_DIR/scripts/docker_start.sh
-# chmod +x $JUDGE_DIR/scripts/docker_stop.sh #Not used/required
+chmod +x $judge_dir/scripts/docker_start.sh
+# chmod +x $judge_dir/scripts/docker_stop.sh #Not used/required
 
 # Add reboot task
 # Run Startup script
-echo "@reboot $JUDGE_DIR/scripts/docker_start.sh" >> cron_tmp
+echo "@reboot $judge_dir/scripts/docker_start.sh" >> cron_tmp
 sudo -u $USER crontab cron_tmp
 rm cron_tmp
 sudo reboot

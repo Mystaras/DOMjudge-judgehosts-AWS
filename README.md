@@ -38,13 +38,13 @@ Deploying the judgehost stack is as easy as running:
 $ chmod +x cloudFormation/deploy_judgehosts.sh
 $ ./cloudFormation/deploy_judgehosts.sh
 ```
-The script will ask you to validate the new CloudFormation stack to be created and will output the judgehost password generated that you will need to update on your domserver (`/jury/users/`). Creating the stack might take a few minutes, the script should give you the creation status of the stack every 30seconds.
+The script will ask you to validate the new CloudFormation stack to be created and will output the judgehost password generated that you will need to update on your domserver (`/jury/users/`). Creating the stack might take a few minutes, the script should give you the creation status of the stack every 30 seconds.
 
 If you wish to understand what the script is doing or wish to debug read [README_manual](./README_manual.md) for instructions on how to do a manual deployment.
 
-When the script has ended you have successfully cerated all resources with 0 judgehosts. **Update the judgehost user on your domserver or update the secret itself to your already defined secret** 
+When the script has ended you have successfully cerated all resources with 0 judgehosts. **Update the judgehost user password on your domserver or update the secret itself to the secret in the `AWS::SecretsManager`** 
 
-Once the judgehost secret has been set on your domserver you can modify and run the bellow command to increase the number of judgehost to N `On Demand` VMs. **It is advised not to use `Spot` instances as if they get claimed while a judge is running a task DOMjudge will have a hard time recovering**
+Once the judgehost secret has been set on your domserver you can modify (TotalCapacity, OnDemandCapacity) and run the bellow command to increase the number of judgehost to N `On Demand` VMs. **It is advised not to use `Spot` instances. As if they get claimed while a judge is running a task, DOMjudge will have a hard time recovering**
 ```console
 $ aws cloudformation update-stack --stack-name JudgeHosts \
                             --use-previous-template \
@@ -57,11 +57,11 @@ $ aws cloudformation update-stack --stack-name JudgeHosts \
 
 The judge-host(s) should be available in your dom-server interface with 5-10 minutes. 
 
-You can play with the template parameters to change the number of instances. **You do not need to change the template directly** just specify the `--parameters` flag like in the previous command or do it using the AWS console. 
+You can play with the template parameters to change the number of instances. **You do not need to change the template directly** just specify the `--parameters` flag like in the previous command or do it using the AWS console in `Cloud Formation`. 
 
 
 ## Starting/Stopping or Scaling-Down judgehost VMs
-Upon creation of the judgehost VM, the [docker_start.sh](./judgehost/scripts/docker_start.sh) script is added to the startup of the VM using `crontab`. If you restart or power on a stopped judgehost VM, it will automatically re-connect to the server without you needing to do anything. 
+Upon creation of the judgehost VM, the [dokcer_init.sh](./judgehost/scripts/docker_init.sh) script is executed on the VM. It installs all required resources and adds the [docker_start.sh](./judgehost/scripts/docker_start.sh) script to the startup of the VM using `crontab`. If you restart or power on a stopped judgehost VM, it will automatically re-connect to the server without you needing to do anything. 
 
 If you terminate a judgehost VM, a new VM will be automatically created by the CloudFormation. If you wish to scale down the number of judgehosts. Either *safely* stop the specific VM if you plan on needing it again and don't mind the cost. Or, decrease the number of judges on the CloudFormation template. 
 
@@ -78,9 +78,15 @@ Host ec2-*
     IdentityFile ~/.ssh/judgehost_key.pem
 ```
 
-## Cleanup or something when wrong when deploying
+## Cleanup / Something when wrong when deploying
 
-If the deployment crashes investigate what went wrong. If you wish to cleanup  due to a crash or when you are done. The following commands will clean all resources:
+- If the deployment crashes investigate what went wrong in the Cloud Formation logs. 
+- If the Cloud Formation stack get deployed but the judges never connect to the domserver. Something went wrong in the initialization scripts. Connect to the judge and check the user data log files:
+    - `/var/log/cloud-init.log` 
+    - `/var/log/cloud-init-output.log`
+
+
+If you wish to cleanup due to a crash or once you are done. The following commands will clean all resources:
 
 - Delete the cloud formation stack and all resources will be freed. The stack name is the variable in the [deploy_judgehosts.sh](./cloudFormation/deploy_judgehosts.sh) script.
 - Delete the previously created bucket. The s3_bucket is the variable in the [deploy_judgehosts.sh](./cloudFormation/deploy_judgehosts.sh) script. 

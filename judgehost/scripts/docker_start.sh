@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Startup script, will run every time the VM is rebooted or powered on.
+
+
 # Force script to be parsed
 {
 
