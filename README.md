@@ -24,8 +24,8 @@ What is created?
 - Resources to ssh to the judgehost VMs
     - `EC2::SecurityGroup`: Ingress port 22 (ssh)
     - `EC2::KeyPair`: ssh private key, can be found in `Parameter Store`
-- `EC2::EC2Fleet`: EC2 fleet with the judgehost VMs
-    - `EC2::LaunchTemplate`: template for EC2 instance deployment
+- `EC2::EC2Fleet`: EC2 fleet of the judgehost VMs
+    - `EC2::LaunchTemplate`: template for EC2 judgehost instance deployment
 
 ## IAM Permission:
 TODO:
@@ -94,9 +94,9 @@ $ ssh ec2-X-X-X-X
 If you wish to cleanup after a crash or terminate the judges. The following commands will clean all resources:
 
 - Delete the CloudFormation stack and all resources will be freed. The `stack_name` is the variable in the [deploy_judgehosts.sh](./cloud-formation/deploy_judgehosts.sh) script.
-- Delete the previously created bucket. The `s3_bucket` and `region` are the variables in the [deploy_judgehosts.sh](./cloud-formation/deploy_judgehosts.sh) script. 
+- Delete the previously created bucket. The `s3_bucket_name` and `region` are the variables in the [deploy_judgehosts.sh](./cloud-formation/deploy_judgehosts.sh) script. 
 
 ```bash
-aws cloudformation delete-stack --stack-name $stack_name
-aws s3 rb s3://$s3_bucket/ --region $region --force
+aws cloudformation delete-stack --stack-name {stack_name|
+aws s3 rb s3://{s3_bucket_name}/ --region {region} --force
 ```
