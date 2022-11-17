@@ -1,6 +1,6 @@
 # DOMjudge judgehosts on AWS using Docker
 
-This repository offers an easy way to deploy DOMjudge judgehosts using CloudFormation on AWS. The deployment is basic and does not include VPC configurations etc.
+This repository offers an easy way to deploy DOMjudge judgehosts using CloudFormation on AWS.
 
 ## Requirements
 - aws-cli/1.25.60 Python/3.8.10 botocore/1.27.59
