@@ -3,16 +3,23 @@
 region=eu-central-1 # Region to create bucket, should be the same as in the template
 
 template=judge-hosts.yaml # Template file, path relative to script location
-
-## Override Template variables.
 stack_name=JudgeHosts   # Name of the Cloud Formation stack
-s3_bucket=judgehost-src # s3 bucket name
-judge_pw_secret=prod/judgehost/pw  # Judgehost password secret
-role_name=judgehost     # Judgehost IAM role
-key_pair=judgehost-key  # Key pair name (ssh key)
-vm_image=ami-0a5b5c0ea66ec560d # Machine os (modify to the latest debian)
-vm_type=t3.micro # Machine category/type
 
+# Override Template variables here if needed.
+## S3 & Secrets Manager
+s3_bucket_name=judgehost-src   # s3 bucket name
+secret_name=prod/judgehost/pw  # Judgehost password secret
+## IAM
+role_name=judgehost            # Judgehost IAM role name 
+profile_name=judgehostProfile  # Judgehost IAM profile name
+s3_bucket_policy_name=judgehostSrcRead # S3 bucket access policy
+secret_policy_name=judgehostGetSecret  # Secret access policy name
+## EC2
+key_pair_name=judgehost-key    # Key pair name (ssh key)
+launch_template_name=judgehostFleetTemplate # Ec2 judgehost fleat template name
+security_group_name=judgehostSecurityGroup  # Judgehosts security group name
+vm_image=ami-0a5b5c0ea66ec560d # Machine os (modify to the latest debian)
+vm_type=t3.micro               # Machine category/type
 
 curr_dir=$(dirname  $(realpath $0)) # The directory of this script, used for relative paths
 
@@ -26,24 +33,27 @@ fi
 printf "Using: $aws_cli_version\n"
 
 # Create s3 bucket for judge code
-printf "\nCreating $s3_bucket bucket\n"
-aws s3api create-bucket --bucket $s3_bucket \
+printf "\nCreating S3 bucket: $s3_bucket_name \n"
+aws s3api create-bucket --bucket $s3_bucket_name \
                     --region $region \
                     --create-bucket-configuration LocationConstraint=$region \
                     --object-ownership BucketOwnerEnforced | jq .Location
 
 # Upload source code code to s3 bucket
 printf "\nUploading code to bucket\n"
-aws s3 cp $curr_dir/../judgehost s3://$s3_bucket/judgehost --recursive
+aws s3 cp $curr_dir/../judgehost s3://$s3_bucket_name/judgehost --recursive
 
 # Deploy cloud formation stack with 0 judges
 printf "\nDeploying stack.\n"
-deploy_stack=$(aws cloudformation deploy --stack-name $stack_name \
+deploy_stack=$(aws cloudformation deploy \
+                    --stack-name $stack_name \
                     --template-file $curr_dir/$template \
                     --parameter-overrides TotalCapacity=0 OnDemandCapacity=0 SpotCapacity=0 \
-                                        BucketName=$s3_bucket SecretName=$judge_pw_secret \
-                                        RoleName=$role_name KeyPairName=$key_pair \
-                                        MachineImage=$vm_image MachineType=$vm_type \
+                                BucketName=$s3_bucket_name SecretName=$secret_name \
+                                RoleName=$role_name ProfileName=$profile_name \
+                                BucketPolicy=$s3_bucket_policy_name SecretPolicy=$secret_policy_name \
+                                LaunchTemplateName=$launch_template_name SecurityGroupName=$security_group_name KeyPairName=$key_pair_name \
+                                MachineImage=$vm_image MachineType=$vm_type \
                     --capabilities CAPABILITY_NAMED_IAM \
                     --no-execute-changes | tail -n 1)
 
@@ -55,7 +65,7 @@ read -p "Create stack [Y/N]? " -n 1 -r
 if [[ ! $REPLY =~ ^[Yy]$ ]]
 then
     printf "Aborting, cleaning up\n"
-    aws s3 rb s3://$s3_bucket/ --region $region --force
+    aws s3 rb s3://$s3_bucket_name/ --region $region --force
     aws cloudformation delete-stack --stack-name $stack_name
     [[ "$0" = "$BASH_SOURCE" ]] && exit 1 || return 1
 fi
@@ -83,9 +93,9 @@ done
 printf "The resources for the judgehosts are ready. By defauilt no judges are up as the password needs to be updated.\n\n"
 
 judge_pw=$(aws secretsmanager get-secret-value \
-                    --secret-id $judge_pw_secret \
+                    --secret-id $secret_name \
                     --region $region \
                     --query SecretString --output text | jq .password | tr -d '"' | tr -d '\n')
 printf "The judgehost password generated is: $judge_pw\nUpdate/Edit the judgehost user using the DOMjudge web interface (<dom_url>/jury/users/).\n\n"
 
-printf "After updating the password refer to the README to see how to increase the number of judgehosts.\n"
+printf "EC2 fleet ressources ready with 0 judgehosts. Refer to the README to see how to increase the number of judgehosts.\n"

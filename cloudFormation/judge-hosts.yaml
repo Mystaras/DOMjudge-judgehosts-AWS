@@ -36,7 +36,7 @@ Parameters:
     Type: String
     Default: judgehost-key
 
-  TemplateName:
+  LaunchTemplateName:
     Type: String
     Default: judgehostEC2Template
   SecurityGroupName:
