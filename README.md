@@ -33,7 +33,7 @@ TODO:
 ## Configure Deployment
 1. Modify the `DOM_BASEURL` in [.env](./judgehost/.env) to the base url of your domserver.
 2. (Optional) Modify the `Template variables` in the [deploy_judgehosts.sh](./cloud-formation/deploy_judgehosts.sh) script to the names you wish. You can leave the default but make sure there are no conflicts in the names with already existing resources.
-    - Apply the modifications also to the [judge-hosts.yaml](./cloud-formation/judge-hosts.yaml) for the `s3_bucket` variable in the `JudgeHostLaunchTemplate` field `UserData`
+    - Apply the modifications also to the [judge-hosts.yaml](./cloud-formation/judge-hosts.yaml) for the `s3_bucket` variable in the `UserData` field of `JudgeHostLaunchTemplate`. 
     - Apply the modifications also to the [docker_start.sh](./judgehost/scripts/docker_start.sh) script for the `s3_bucket`, `judge_pw_secret` and `region` variables.
 
 ## Deployment
