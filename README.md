@@ -45,7 +45,7 @@ If you wish to understand what the script is doing or wish to debug read [README
 When the script has ended you have successfully cerated all resources with 0 judgehosts. **Update the judgehost user password on your domserver or update the secret itself to the secret in the `AWS::SecretsManager`** 
 
 Once the judgehost secret has been set on your domserver you can modify (TotalCapacity, OnDemandCapacity) and run the bellow command to increase the number of judgehost to N `On Demand` VMs. **It is advised not to use `Spot` instances. As if they get claimed while a judge is running a task, DOMjudge will have a hard time recovering**
-```bash
+```shell
 $ aws cloudformation update-stack --stack-name JudgeHosts \
                             --use-previous-template \
                             --parameters ParameterKey=CapacityType,ParameterValue=on-demand \
