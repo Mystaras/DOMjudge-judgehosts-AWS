@@ -1,5 +1,5 @@
 ### S3 bucket
-The template requires an s3 bucket populated with the source code for the judge-hosts [judgehost/](./judgehost/). The reason it is not created using the template is the inability to populate it. If that becomes an option implement it!! 
+The template requires an s3 bucket populated with the source code for the judge-hosts [judgehost/](./judgehost/). The reason it is not created using the template is the inability to populate it. TODO: If that becomes an option implement it.
 Create a bucket named `judgehost-src`. This can be done by running the bellow cli commands.
 
 ```bash
@@ -14,7 +14,7 @@ $ aws s3 cp ./judgehost s3://judgehost-src/judgehost --recursive
 ```
 
 ### Deployment
-You need to create a CloudFormation stack using the [judge-host.yaml](./cloudFormation/judge-hosts.yaml) template. 
+You need to create a Cloud Formation stack using the [judge-host.yaml](./cloudFormation/judge-hosts.yaml) template. 
 
 1. First deploy it with **zero instances**. You can do so by modifying `TotalCapacity`, `OnDemandCapacity`, `SpotCapacity` in the template parameters or specifying `--parameter-overrides` on CLI (see bellow). 
 
@@ -42,7 +42,7 @@ This might take some time (5-10 minutes). You can check the status of your stack
 $ aws cloudformation describe-stacks --stack-name JudgeHosts --query "Stacks[0].StackStatus"
 ```
 
-Or by using the `aws console` in `CloudFormation`. You are ready when `StackStatus` is in state `CREATE_COMPLETE`. If something breaks check the logs.
+Or by using the `AWS console` in `Cloud Formation`. You are ready when `StackStatus` is in state `CREATE_COMPLETE`. If something breaks check the logs.
 
 2. Now that you have created all the resources, you need to fetch the secret that was created for the judges by the template. You can do that by running:
 ```bash

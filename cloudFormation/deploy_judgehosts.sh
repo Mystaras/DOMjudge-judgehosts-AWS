@@ -8,8 +8,8 @@ template=judge-hosts.yaml # Template file, path relative to script location
 stack_name=JudgeHosts   # Name of the Cloud Formation stack
 s3_bucket=judgehost-src # s3 bucket name
 judge_pw_secret=prod/judgehost/pw  # Judgehost password secret
-role_name=JudgeHost     # Judgehost IAM role
-key_pair=kp-judgehost   # Key pair name (ssh key)
+role_name=judgehost     # Judgehost IAM role
+key_pair=judgehost-key  # Key pair name (ssh key)
 vm_image=ami-0a5b5c0ea66ec560d # Machine os (modify to the latest debian)
 vm_type=t3.micro # Machine category/type
 

@@ -17,10 +17,16 @@ Parameters:
   ## IAM
   RoleName:
     Type: String
-    Default: JudgeHost
+    Default: judgehost
   ProfileName:
     Type: String
-    Default: JudgeHostProfile
+    Default: judgehostProfile
+  BucketPolicy:
+    Type: String
+    Default: judgehostSrcRead
+  SecretPolicy:
+    Type: String
+    Default: judgehostGetSecret
 
   ## EC2
   CidrIpSSH:
@@ -28,7 +34,15 @@ Parameters:
     Default: 0.0.0.0/0
   KeyPairName:
     Type: String
-    Default: kp-judgehost
+    Default: judgehost-key
+
+  TemplateName:
+    Type: String
+    Default: judgehostEC2Template
+  SecurityGroupName:
+    Type: String
+    Default: judgehostSecurityGroup
+
   MachineImage:
     Type: String
     Default: ami-0a5b5c0ea66ec560d
@@ -39,18 +53,16 @@ Parameters:
   CapacityType:
     Type: String
     Default: on-demand
-  TotalCapacity:
+  SpotCapacity:
     Type: Number
     Default: 0
   OnDemandCapacity:
     Type: Number
     Default: 0
-  SpotCapacity:
+  TotalCapacity:
     Type: Number
     Default: 0
-
-
-
+  
 
 Resources:
 
@@ -83,7 +95,7 @@ Resources:
   JudgeHostGetSecretPolicy:
     Type: AWS::IAM::Policy
     Properties:
-      PolicyName: JudgeHostGetSecret
+      PolicyName: !Ref SecretPolicy
       PolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -96,7 +108,7 @@ Resources:
   JudgeHostSrcReadPolicy:
     Type: AWS::IAM::Policy
     Properties:
-      PolicyName: JudgeHostSrcRead
+      PolicyName: !Ref BucketPolicy
       PolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -125,7 +137,7 @@ Resources:
   JudgeHostSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupName: JudgeHostSecurityGroup
+      GroupName: !Ref SecurityGroupName
       GroupDescription: 'Security group for judgehosts'
       SecurityGroupIngress: 
         - IpProtocol: tcp 
@@ -142,7 +154,7 @@ Resources:
   JudgeHostLaunchTemplate:
     Type: AWS::EC2::LaunchTemplate
     Properties:
-      LaunchTemplateName: MyLaunchTemplate
+      LaunchTemplateName: !Ref TemplateName
       LaunchTemplateData:
         ImageId: !Ref MachineImage
         InstanceType: !Ref MachineType
