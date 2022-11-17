@@ -1,0 +1,190 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Deploy Judges for DomJudge 
+
+Parameters:
+  ## S3
+  BucketName:
+    Type: String
+    Default: judgehost-src
+  ## Secret Manager
+  SecretDescription:
+    Type: String
+    Default: Login for judgehosts.
+  SecretName:
+    Type: String
+    Default: prod/judgehost/pw
+  
+  ## IAM
+  RoleName:
+    Type: String
+    Default: JudgeHost
+  ProfileName:
+    Type: String
+    Default: JudgeHostProfile
+
+  ## EC2
+  CidrIpSSH:
+    Type: String
+    Default: 0.0.0.0/0
+  KeyPairName:
+    Type: String
+    Default: kp-judgehost
+  MachineImage:
+    Type: String
+    Default: ami-0a5b5c0ea66ec560d
+  MachineType:
+    Type: String
+    Default: t3.micro
+
+  CapacityType:
+    Type: String
+    Default: on-demand
+  TotalCapacity:
+    Type: Number
+    Default: 0
+  OnDemandCapacity:
+    Type: Number
+    Default: 0
+  SpotCapacity:
+    Type: Number
+    Default: 0
+
+
+
+
+Resources:
+
+  ## Secret Manager
+  JudgeHostSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Description: !Ref SecretDescription
+      Name: !Ref SecretName
+      GenerateSecretString:
+        SecretStringTemplate: '{"username": "judgehost"}'
+        GenerateStringKey: password
+        PasswordLength: 32
+        ExcludeCharacters: "/@\"'\\"
+
+  ## IAM
+  JudgeHostRole:
+    Type : AWS::IAM::Role
+    Properties:
+      RoleName: !Ref RoleName
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRole
+            Principal:
+              Service: ec2.amazonaws.com
+
+
+  JudgeHostGetSecretPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: JudgeHostGetSecret
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: secretsmanager:GetSecretValue
+            Resource: !Ref JudgeHostSecret
+      Roles:
+        - !Ref JudgeHostRole
+
+  JudgeHostSrcReadPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: JudgeHostSrcRead
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - 's3:GetObject'
+              - 's3:GetObjectVersion'
+              - 's3:ListBucket'
+            Resource: 
+              - !Join ['', ['arn:aws:s3:::', !Ref BucketName]]
+              - !Join ['', ['arn:aws:s3:::', !Ref BucketName, '/*']]
+              # - arn:aws:s3:::dsa-judgehost-src
+              # - arn:aws:s3:::dsa-judgehost-src/*
+      Roles:
+        - !Ref JudgeHostRole
+
+  JudgeHostInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      InstanceProfileName: !Ref ProfileName
+      Path: '/'
+      Roles:
+        - !Ref JudgeHostRole
+
+  ## EC2
+  JudgeHostSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: JudgeHostSecurityGroup
+      GroupDescription: 'Security group for judgehosts'
+      SecurityGroupIngress: 
+        - IpProtocol: tcp 
+          FromPort: 22 
+          ToPort: 22
+          CidrIp: !Ref CidrIpSSH
+
+  JudgeHostKeyPair:
+    Type: AWS::EC2::KeyPair
+    Properties:
+      KeyName: !Ref KeyPairName
+      KeyType: rsa
+
+  JudgeHostLaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateName: MyLaunchTemplate
+      LaunchTemplateData:
+        ImageId: !Ref MachineImage
+        InstanceType: !Ref MachineType
+        KeyName: !Ref JudgeHostKeyPair
+        SecurityGroupIds: 
+          - !GetAtt "JudgeHostSecurityGroup.GroupId"
+        IamInstanceProfile:
+          Arn: !GetAtt
+          - JudgeHostInstanceProfile
+          - Arn
+        UserData:
+          Fn::Base64:
+            !Sub |
+              #!/bin/bash -eu
+              # this script is run by root on startup no env variables defined
+              # by default user on Debian AWS will be admin 
+              user=admin 
+              s3_bucket=judgehost-src
+
+              # Fetch judgehost src from s3
+              sudo -u $user aws s3 cp s3://$s3_bucket /home/$user/ --recursive
+
+              # Run init script
+              judge_dir=/home/$user/judgehost
+              chmod +x $judge_dir/scripts/init.sh
+              sudo -u $user $judge_dir/scripts/docker_init.sh 
+
+        
+
+  JudgeHostEc2Fleet:
+    Type: AWS::EC2::EC2Fleet
+    Properties:
+      # ExcessCapacityTerminationPolicy: no-termination
+      LaunchTemplateConfigs:
+        - LaunchTemplateSpecification: 
+            Version: $Latest
+            LaunchTemplateId: !Ref JudgeHostLaunchTemplate
+      ReplaceUnhealthyInstances: True
+
+      # Here for example specify 5 on demand to be sure and then 5 spot
+      TargetCapacitySpecification:
+        DefaultTargetCapacityType: !Ref CapacityType
+        OnDemandTargetCapacity: !Ref OnDemandCapacity
+        SpotTargetCapacity: !Ref SpotCapacity
+        TotalTargetCapacity: !Ref TotalCapacity

@@ -1,0 +1,29 @@
+version: '3.9'
+
+secrets:
+  domjudge-mysql-pw-judgehost:
+    file: ./secrets/domjudge-mysql-pw-judgehost.secret
+
+networks:
+  domjudge:
+    name: domjudge
+
+services:
+  judgehost:
+    deploy:
+      restart_policy:
+        condition: on-failure
+    container_name: judgehost-${JUDGE_ID}
+    image: domjudge/judgehost:latest
+    privileged: true
+    hostname: judgedaemon-${JUDGE_ID}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    secrets:
+      - domjudge-mysql-pw-judgehost
+    environment:
+      - DAEMON_ID=0 # The physical core
+      - JUDGEDAEMON_PASSWORD_FILE=/run/secrets/domjudge-mysql-pw-judgehost
+      - DOMSERVER_BASEURL=${DOM_BASEURL}
+    # cpuset: '1'
+
