@@ -5,7 +5,7 @@ This repository offers an easy way to deploy DOMjudge judgehosts using CloudForm
 ## Requirements
 - aws-cli/1.25.60 Python/3.8.10 botocore/1.27.59
     - [Login](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html) to able to use the CLI. 
-    - The default `eu-central-1`, see [Configure Deployment](#configure-deployment) if you wish to modify.
+    - The default region used is `eu-central-1`, see [Configure Deployment](#configure-deployment) if you wish to modify it.
     - The reason we use aws-cli v1 is to be able to use a virtual-env but v2 should work as well.
 - [jq](https://manpages.ubuntu.com/manpages/xenial/man1/jq.1.html)
 
