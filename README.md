@@ -13,18 +13,19 @@ In this README you will find instructions on how to deploy judgehosts for DOMjud
 ## Template
 The [judge-host.yaml](cloud-formation/judge-hosts.yaml) template will create all the necessary resources for the judge-hosts and deploy and EC2Fleet of the specified number of judgehosts.
 
-![Graph](./readme-img/judgehost-designer.png)
+![Graph](./readme-img/judgehost-designer.png){:height="36px" width="36px"}
 
 What is created?
 - `SecretsManager::Secret`: secret for the judgehost password
 - `S3 bucket`: contents of [./judgehosts](./judgehost/) which contains all the required code to setup and deploy the judgehosts
-- `AWS::IAM::Role`: role for the judgehosts in order to access the `secret` and `S3 bucket`.
-    - `IAM::InstanceProfile`: profile to attach the role the judgehost VMs
-    - `IAM::Policy`: policies to access the secret and S3 bucket
+- `IAM::InstanceProfile`: profile to attach the role the judgehost VMs
+    - `AWS::IAM::Role`: role for the judgehosts in order to access the `secret` and `S3 bucket`.
+        - `IAM::Policy`: policies to access the secret and S3 bucket
 - Resources to ssh to the judgehost VMs
     - `EC2::SecurityGroup`: Ingress port 22 (ssh)
     - `EC2::KeyPair`: ssh private key, can be found in `Parameter Store`
 - `EC2::EC2Fleet`: EC2 fleet with the judgehost VMs
+    - `EC2::LaunchTemplate`: template for EC2 instance deployment
 
 ## IAM Permission:
 TODO:
