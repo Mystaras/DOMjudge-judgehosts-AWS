@@ -13,7 +13,7 @@ In this README you will find instructions on how to deploy judgehosts for DOMjud
 ## Template
 The [judge-host.yaml](cloud-formation/judge-hosts.yaml) template will create all the necessary resources for the judge-hosts and deploy and EC2Fleet of the specified number of judgehosts.
 
-![Graph](./readme-img/judgehost-designer.png){:height="36px" width="36px"}
+<img src="./readme-img/judgehost-designer.png" width="350">
 
 What is created?
 - `SecretsManager::Secret`: secret for the judgehost password
