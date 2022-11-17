@@ -50,7 +50,7 @@ When the script has ended, you have successfully created all resources with 0 ju
 
 Once the judgehost secret has been set on your domserver, you can modify (TotalCapacity, OnDemandCapacity) and run the bellow command to increase the number of judgehosts to N `On Demand` VMs. **It is advised not to use `Spot` instances. As if they get claimed while a judgehost is running a task, DOMjudge will have a hard time recovering**.
 ```bash
-aws cloudformation update-stack --stack-name JudgeHosts \
+aws cloudformation update-stack --stack-name {STACK_NAME} \
                             --use-previous-template \
                             --parameters ParameterKey=OnDemandCapacity,ParameterValue={N} \
                                         ParameterKey=TotalCapacity,ParameterValue={N} \
