@@ -18,7 +18,7 @@ secret_policy_name=judgehostGetSecret  # Secret access policy name
 key_pair_name=judgehost-key    # Key pair name (ssh key)
 launch_template_name=judgehostEC2Template  # Ec2 judgehost fleat template name
 security_group_name=judgehostSecurityGroup # Judgehosts security group name
-vm_image=ami-0a5b5c0ea66ec560d # Machine os (modify to the latest debian)
+vm_image=ami-0a5b5c0ea66ec560d # Machine os (modify to the latest Debian)
 vm_type=t3.micro               # Machine category/type
 
 curr_dir=$(dirname  $(realpath $0)) # The directory of this script, used for relative paths

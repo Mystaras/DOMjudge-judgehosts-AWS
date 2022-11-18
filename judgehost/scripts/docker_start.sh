@@ -10,8 +10,9 @@
 ec2_id=$(ec2-metadata -i)
 ec2_id=${ec2_id:15}
 
-s3_bucket=judgehost-src
-judge_pw_secret=prod/judgehost/pw
+# TODO: Modify the following 3 variables if needed
+s3_bucket_name=judgehost-src
+secret_name=prod/judgehost/pw
 region=eu-central-1
 
 # Find the judge directory
@@ -27,11 +28,11 @@ echo "judgehost dir found at: $judge_dir"
 # Sync source code in case of update
 # This will also modify the curent script and behaviour can be undefined.
 # Mitigated by forcing the entire script to be parsed before runing.
-aws s3 sync s3://$s3_bucket /home/$USER/
+aws s3 sync s3://$s3_bucket_name /home/$USER/
 
 # Sync judgehost pw in case it changed
 printf -- $(aws secretsmanager get-secret-value \
-                                --secret-id $judge_pw_secret \
+                                --secret-id $secret_name \
                                 --region $region \
                                 --query SecretString \
                                 --output text | jq .password | tr -d '"' | tr -d '\n') > $judge_dir/secrets/domjudge-mysql-pw-judgehost.secret

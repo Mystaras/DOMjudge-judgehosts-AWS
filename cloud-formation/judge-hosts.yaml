@@ -166,13 +166,13 @@ Resources:
           Fn::Base64:
             !Sub |
               #!/bin/bash -eu
-              # this script is run by root on startup no env variables defined
-              # by default user on Debian AWS will be admin 
+              # This script is run by root on startup no env variables defined
+              # the default user on Debian AWS is admin 
               user=admin 
-              s3_bucket=judgehost-src
+              s3_bucket_name=judgehost-src #TODO: Modify if needed
 
               # Fetch judgehost src from s3
-              sudo -u $user aws s3 cp s3://$s3_bucket /home/$user/ --recursive
+              sudo -u $user aws s3 cp s3://$s3_bucket_name /home/$user/ --recursive
 
               # Run init script
               judge_dir=/home/$user/judgehost
