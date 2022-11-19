@@ -84,7 +84,7 @@ Upon creation of the judgehost VM, the [docker_init.sh](./judgehost/scripts/dock
 
 The [docker_start.sh](./judgehost/scripts/docker_start.sh) synchronizes the `judgehost password` and the `source code`. Therefore, if the any of the previously mentioned are modified/updated. Rebooting the judgehost VMs will suffice to apply any fixes and reconnect to the server without requiring any additional action. 
 
-If you terminate manually a specific judgehost VM, a new VM will be automatically provisioned by the EC2 fleet scheduler. If you wish to scale down the number of judgehosts. Either *safely* stop the specific VM if you plan on using it again and don't mind the cost of a stopped instance. Or, decrease the number of judges on the CloudFormation template. 
+If you terminate manually a specific judgehost VM, a new VM will be automatically provisioned by the EC2 fleet scheduler. If you wish to scale down the number of judgehosts. Either *safely* stop the specific VM if you plan on using it again and don't mind the cost of a stopped instance. Or, decrease the number of judges by updating the CloudFormation stack. 
 
 Keep in mind that:
 - If you power-off/reboot a judgehost VM, all internal judging related data will be lost (see comments of [docker_start.sh](./judgehost/scripts/docker_start.sh))
